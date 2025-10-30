@@ -1,6 +1,11 @@
-import { it, expect } from "vitest";
+import { it, expect, vi } from "vitest";
 import { vol, fs } from "memfs";
 import Scanner from "../scanner.ts";
+
+vi.mock("fs", async () => {
+  const memfs = await import("memfs");
+  return { default: memfs.fs };
+});
 
 it("should find all git repositories in folder", () => {
   const projectsDir = "/projects";

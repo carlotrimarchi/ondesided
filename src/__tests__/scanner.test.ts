@@ -1,5 +1,6 @@
 import { it, expect } from "vitest";
 import { vol, fs } from "memfs";
+import Scanner from "../scanner.ts";
 
 it("should find all git repositories in folder", () => {
   const projectsDir = "/projects";
@@ -10,14 +11,16 @@ it("should find all git repositories in folder", () => {
     "dir1/main.js": "console.log('hello')",
     "dir2/index.js": "console.log('world')",
     "empty-dir/.gitkeep": "",
+    file1: "just a regular file",
+    file2: "another regular file",
+    ".DS_Store": "",
   };
+
+  const scanner = new Scanner();
 
   vol.fromJSON(mockFileSystem, projectsDir);
 
-  const allDirectories = fs.readdirSync(projectsDir, { withFileTypes: true });
-  const projectDirectories = allDirectories.filter((dir) =>
-    fs.readdirSync(`${projectsDir}/${dir.name}`).includes(".git"),
-  );
+  const projectDirectories = scanner.scanFolder(projectsDir);
 
   expect(projectDirectories).toContainEqual(
     expect.objectContaining({ name: "project1" }),

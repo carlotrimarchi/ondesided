@@ -1,6 +1,10 @@
-import { it, expect, vi } from "vitest";
+import { it, expect, vi, beforeEach } from "vitest";
 import { vol, fs } from "memfs";
 import Scanner from "../scanner.ts";
+
+beforeEach(() => {
+  vol.reset();
+});
 
 vi.mock("fs", async () => {
   const memfs = await import("memfs");
@@ -44,4 +48,19 @@ it("should find all git repositories in folder", () => {
   ]);
 
   expect(projectDirectories).toHaveLength(3);
+});
+
+it("should return an empty directory when folder contain no git repositories", () => {
+  const projectsDir = "/projects";
+  const mockFileSystem = {
+    "dir1/main.js": "console.log('hello')",
+    "dir2/index.js": "console.log('world')",
+    file1: "just a regular file",
+  };
+  vol.fromJSON(mockFileSystem, projectsDir);
+  const scanner = new Scanner();
+
+  const projectDirectories = scanner.scanFolder(projectsDir);
+
+  expect(projectDirectories).toHaveLength(0);
 });

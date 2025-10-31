@@ -34,5 +34,8 @@
     "tsx": "^4.20.6",
     "typescript": "^5.9.3",
     "vitest": "^4.0.5"
+  },
+  "dependencies": {
+    "commander": "^14.0.2"
   }
 }

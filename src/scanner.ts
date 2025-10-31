@@ -7,6 +7,7 @@ class Scanner {
     const allDirectories = fs.readdirSync(path, {
       withFileTypes: true,
     });
+
     const projectDirectories = allDirectories.filter((dir) => {
       if (!dir.isDirectory()) {
         return false;

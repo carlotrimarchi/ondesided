@@ -17,9 +17,10 @@ export default function formatter(
         path: `${dir.path}/${dir.name}`,
       };
     });
-    console.log("output", output);
     return JSON.stringify(output);
-  } else {
+  } else if (format === "path") {
     return directories.map((dir) => `${dir.path}/${dir.name}`).join("\n");
+  } else {
+    throw new Error(`Invalid format: ${format}. Use path, tsv, or json.`);
   }
 }

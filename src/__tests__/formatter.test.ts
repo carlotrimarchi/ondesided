@@ -62,4 +62,10 @@ describe("formatter", () => {
       expect(parsed).toEqual([]);
     });
   });
+
+  it("should throw an error for invalid formats", () => {
+    const mockProjects = [{ name: "project1", path: "/projects" }] as Dirent[];
+
+    expect(() => formatter(mockProjects, "invalid")).toThrow("Invalid format");
+  });
 });

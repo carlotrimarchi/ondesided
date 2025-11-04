@@ -4,9 +4,9 @@ import formatter from "../formatter.js";
 
 describe("formatter", () => {
   const mockProjects = [
-    { name: "project1", path: "/projects" },
-    { name: "project2", path: "/projects" },
-    { name: "project3", path: "/projects" },
+    { name: "project1", parentPath: "/projects" },
+    { name: "project2", parentPath: "/projects" },
+    { name: "project3", parentPath: "/projects" },
   ] as Dirent[];
 
   describe("path format (default)", () => {
@@ -64,8 +64,12 @@ describe("formatter", () => {
   });
 
   it("should throw an error for invalid formats", () => {
-    const mockProjects = [{ name: "project1", path: "/projects" }] as Dirent[];
+    const mockProjects = [
+      { name: "project1", parentPath: "/projects" },
+    ] as Dirent[];
 
-    expect(() => formatter(mockProjects, "invalid")).toThrow("Invalid format");
+    expect(() => formatter(mockProjects, "invalid" as any)).toThrow(
+      "Invalid format",
+    );
   });
 });

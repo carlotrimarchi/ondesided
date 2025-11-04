@@ -8,18 +8,18 @@ export default function formatter(
 ): string {
   if (format === "tsv") {
     return directories
-      .map((dir) => `${dir.name}\t${dir.path}/${dir.name}`)
+      .map((dir) => `${dir.name}\t${dir.parentPath}/${dir.name}`)
       .join("\n");
   } else if (format === "json") {
     const output = directories.map((dir) => {
       return {
         name: dir.name,
-        path: `${dir.path}/${dir.name}`,
+        path: `${dir.parentPath}/${dir.name}`,
       };
     });
     return JSON.stringify(output);
   } else if (format === "path") {
-    return directories.map((dir) => `${dir.path}/${dir.name}`).join("\n");
+    return directories.map((dir) => `${dir.parentPath}/${dir.name}`).join("\n");
   } else {
     throw new Error(`Invalid format: ${format}. Use path, tsv, or json.`);
   }

@@ -13,7 +13,7 @@ class Scanner {
         return false;
       }
 
-      return fs.readdirSync(`${path}/${dir.name}`).includes(".git");
+      return fs.readdirSync(`${dir.parentPath}/${dir.name}`).includes(".git");
     });
     return projectDirectories;
   }

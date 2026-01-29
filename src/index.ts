@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { program, Option } from "commander";
 import Scanner from "./scanner.js";
 import formatter from "./formatter.js";

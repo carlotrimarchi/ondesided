@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "description": "Track your side projects",
   "type": "module",
+  "bin": {
+    "ondesided": "./dist/index.js"
+  },
   "scripts": {
     "cli": "tsx src/index.ts",
     "build": "tsc",

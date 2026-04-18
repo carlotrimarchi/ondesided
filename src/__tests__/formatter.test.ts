@@ -1,13 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { Dirent } from "fs";
 import formatter from "../formatter.js";
+import type { Project } from "../scanner.js";
 
 describe("formatter", () => {
   const mockProjects = [
-    { name: "project1", parentPath: "/projects" },
-    { name: "project2", parentPath: "/projects" },
-    { name: "project3", parentPath: "/projects" },
-  ] as Dirent[];
+    { name: "project1", path: "/projects/project1" },
+    { name: "project2", path: "/projects/project2" },
+    { name: "project3", path: "/projects/project3" },
+  ] as Project[];
 
   describe("path format (default)", () => {
     it("should return a string of paths separated by a new line", () => {
@@ -19,7 +19,7 @@ describe("formatter", () => {
     });
 
     it("should return an empty string when no projects are found", () => {
-      const mockProjects = [] as Dirent[];
+      const mockProjects = [] as Project[];
       const result = formatter(mockProjects);
       expect(result).toBe("");
     });
@@ -34,7 +34,7 @@ describe("formatter", () => {
     });
 
     it("should return an empty string when no projects are found", () => {
-      const mockProjects = [] as Dirent[];
+      const mockProjects = [] as Project[];
       const result = formatter(mockProjects, "tsv");
       expect(result).toBe("");
     });
@@ -55,7 +55,7 @@ describe("formatter", () => {
     });
 
     it("should return an empty JSON string when no projects are found", () => {
-      const mockProjects = [] as Dirent[];
+      const mockProjects = [] as Project[];
       const result = formatter(mockProjects, "json");
       const parsed = JSON.parse(result);
 
@@ -65,8 +65,8 @@ describe("formatter", () => {
 
   it("should throw an error for invalid formats", () => {
     const mockProjects = [
-      { name: "project1", parentPath: "/projects" },
-    ] as Dirent[];
+      { name: "project1", path: "/projects" },
+    ] as Project[];
 
     expect(() => formatter(mockProjects, "invalid" as any)).toThrow(
       "Invalid format",

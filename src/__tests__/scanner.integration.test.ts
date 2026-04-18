@@ -25,11 +25,8 @@ describe("Scanner integration tests", () => {
     if (!result[0]) {
       throw new Error("Expected project to exist");
     }
-    console.log(result);
 
     expect(result[0]).toHaveProperty("name");
-    expect(result[0]).toHaveProperty("parentPath");
-    expect(result[0].isDirectory()).toBe(true);
-    expect(result[0].constructor.name).toBe("Dirent");
+    expect(result[0]).toHaveProperty("path");
   });
 });

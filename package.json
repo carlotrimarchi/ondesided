@@ -33,6 +33,8 @@
   },
   "homepage": "https://github.com/carlotrimarchi/ondesided#readme",
   "devDependencies": {
+    "@emnapi/core": "^1.10.0",
+    "@emnapi/runtime": "^1.10.0",
     "@types/node": "^24.9.2",
     "memfs": "^4.50.0",
     "tsx": "^4.20.6",

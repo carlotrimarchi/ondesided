@@ -294,11 +294,11 @@ describe("getGitInfo", () => {
 
 			const info = getGitInfo(repoPath);
 
-			expect(info.isGitRepo).toBe(true);
-			expect(info.branch).toBe("test-branch");
-			expect(info.lastCommitMessage).toBe("init");
-			expect(info.lastCommitDate).toBeInstanceOf(Date);
-			expect(info.isDirty).toBe(false);
+			expect(info).not.toBeNull();
+			expect(info!.branch).toBe("test-branch");
+			expect(info!.lastCommitMessage).toBe("init");
+			expect(info!.lastCommitDate).toBeInstanceOf(Date);
+			expect(info!.isDirty).toBe(false);
 		} finally {
 			fs.rmSync(repoPath, { recursive: true, force: true });
 		}
@@ -324,11 +324,11 @@ describe("getGitInfo", () => {
 
 			const info = getGitInfo(repoPath);
 
-			expect(info.isGitRepo).toBe(true);
-			expect(info.branch).toBe("test-branch");
-			expect(info.lastCommitMessage).toBe("init");
-			expect(info.lastCommitDate).toBeInstanceOf(Date);
-			expect(info.isDirty).toBe(true);
+			expect(info).not.toBeNull();
+			expect(info!.branch).toBe("test-branch");
+			expect(info!.lastCommitMessage).toBe("init");
+			expect(info!.lastCommitDate).toBeInstanceOf(Date);
+			expect(info!.isDirty).toBe(true);
 		} finally {
 			fs.rmSync(repoPath, { recursive: true, force: true });
 		}
@@ -347,17 +347,17 @@ describe("getGitInfo", () => {
 
 			const info = getGitInfo(repoPath);
 
-			expect(info.isGitRepo).toBe(true);
-			expect(info.branch).toBe("test-branch");
-			expect(info.lastCommitMessage).toBeNull();
-			expect(info.lastCommitDate).toBeNull();
-			expect(info.isDirty).toBe(false);
+			expect(info).not.toBeNull();
+			expect(info!.branch).toBe("test-branch");
+			expect(info!.lastCommitMessage).toBeNull();
+			expect(info!.lastCommitDate).toBeNull();
+			expect(info!.isDirty).toBe(false);
 		} finally {
 			fs.rmSync(repoPath, { recursive: true, force: true });
 		}
 	});
 
-	it("returns null git fields for an existing non-git directory", () => {
+	it("returns null for an existing non-git directory", () => {
 		const nonRepoPath = path.join(
 			os.tmpdir(),
 			"ondesided-git-info-nonrepo-" + Date.now(),
@@ -365,31 +365,18 @@ describe("getGitInfo", () => {
 
 		try {
 			fs.mkdirSync(nonRepoPath);
-
-			expect(getGitInfo(nonRepoPath)).toEqual({
-				isGitRepo: false,
-				branch: null,
-				lastCommitMessage: null,
-				lastCommitDate: null,
-				isDirty: null,
-			});
+			expect(getGitInfo(nonRepoPath)).toBeNull();
 		} finally {
 			fs.rmSync(nonRepoPath, { recursive: true, force: true });
 		}
 	});
 
-	it("returns null git fields for a path that does not exist", () => {
+	it("returns null for a path that does not exist", () => {
 		const missingPath = path.join(
 			os.tmpdir(),
 			"ondesided-git-info-missing-" + Date.now(),
 		);
 
-		expect(getGitInfo(missingPath)).toEqual({
-			isGitRepo: false,
-			branch: null,
-			lastCommitMessage: null,
-			lastCommitDate: null,
-			isDirty: null,
-		});
+		expect(getGitInfo(missingPath)).toBeNull();
 	});
 });

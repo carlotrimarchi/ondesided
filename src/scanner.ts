@@ -5,6 +5,7 @@ import type { GitInfo } from "./git.js";
 export type Project = {
   name: string;
   path: string;
+  isGitRepo: boolean;
   git: GitInfo | null;
 };
 
@@ -27,7 +28,8 @@ class Scanner {
     return projectDirectories.map((dir) => ({
       name: dir.name,
       path: this.getDirentFullPath(dir, folderPath),
-      git: null
+      isGitRepo: false,
+      git: null,
     }));
   }
 

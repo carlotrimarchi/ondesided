@@ -3,7 +3,7 @@
 import { program, Option } from "commander";
 import Scanner from "./scanner.js";
 import formatter from "./formatter.js";
-import { getLastCommit } from "./git.js";
+import getGitInfo from "./git.js";
 
 program
 	.name("ondesided")
@@ -12,23 +12,21 @@ program
 	.option("-d, --dir <path>", "Directory to scan")
 	.addOption(
 		new Option("-f, --format <type>", "Format output: path, tsv, json")
-			.choices(["path", "tsv", "json"])
-			.default("path"),
+			.choices(["pretty", "tsv", "json"])
+			.default("pretty"),
+	)
+	.addOption(
+		new Option("--detail <level>", "Description...")
+			.choices(["path-only", "minimal", "simple", "full"])
+			.default("path-only"),
 	)
 	.action((options) => {
 		const scanner = new Scanner();
 		const projectDirectories = scanner.scanFolder(options.dir);
 		const enrichedProjects = projectDirectories.map((project) => {
-			const { message, date } = getLastCommit(project.path);
-
-			project.git = {
-				isGitRepo: true,
-				lastCommitDate: date,
-				lastCommitMessage: message,
-				branch: null,
-				isDirty: null,
-			};
-
+			const git = getGitInfo(project.path);
+			project.isGitRepo = git !== null;
+			project.git = git;
 			return project;
 		});
 
@@ -57,7 +55,7 @@ program
 				return projA.name.localeCompare(projB.name);
 			}
 		});
-		const output = formatter(enrichedProjects, options.format);
+		const output = formatter(enrichedProjects, options.format, options.detail);
 
 		if (output) {
 			console.log(output);

@@ -2,7 +2,6 @@ import { execSync } from "child_process";
 import type { ExecSyncOptionsWithStringEncoding } from "child_process";
 
 export interface GitInfo {
-	isGitRepo: boolean;
 	lastCommitDate: Date | null;
 	lastCommitMessage: string | null;
 	branch: string | null;
@@ -28,23 +27,14 @@ const gitCommand = (path: string, command: string): string | null => {
 	}
 };
 
-export default function getGitInfo(path: string): GitInfo {
-	if (!isGitRepo(path)) {
-		return {
-			isGitRepo: false,
-			lastCommitDate: null,
-			lastCommitMessage: null,
-			branch: null,
-			isDirty: null,
-		};
-	}
+export default function getGitInfo(path: string): GitInfo | null {
+	if (!isGitRepo(path)) return null;
 
 	const branch = getBranch(path);
 	const { message, date } = getLastCommit(path);
 	const isDirty = isRepoDirty(path);
 
 	return {
-		isGitRepo: true,
 		lastCommitDate: date,
 		lastCommitMessage: message,
 		branch,

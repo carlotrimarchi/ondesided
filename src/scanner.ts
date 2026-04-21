@@ -9,8 +9,14 @@ export type Project = {
   git: GitInfo | null;
 };
 
+/** 
+ * Scans a directory and returns all immediate subdirectories 
+ * that contain a .git folder. 
+ */
+
 class Scanner {
-  constructor() {}
+
+  /** Returns all git projects found in the given folder. */
 
   scanFolder(folderPath: string): Project[] {
     const allDirectories = fs.readdirSync(folderPath, {
@@ -37,7 +43,7 @@ class Scanner {
    * Get full path of a Dirent
    *
    * It handles Node v20 (where only path was available)
-   * And Node 21+ (where path is now deprecated and parentPath is available)
+   * And Node 21.5.0+ (where path is now deprecated and parentPath is available)
    */
   private getDirentFullPath(dirent: Dirent, basePath: string): string {
     // parentPath is available in Node v21.5.0+

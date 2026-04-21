@@ -54,7 +54,7 @@ program
 	.name("ondesided")
 	.description("A CLI to manage your side projects.")
 	.version("0.1.0")
-	.option("-d, --dir <path>", "Directory to scan")
+	.requiredOption("-d, --dir <path>", "Directory to scan")
 	.addOption(
 		new Option("-f, --format <type>", "Format output: pretty, tsv, json")
 			.choices(["pretty", "tsv", "json"])

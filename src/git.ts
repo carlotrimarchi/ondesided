@@ -8,6 +8,13 @@ export interface GitInfo {
 	isDirty: boolean | null;
 }
 
+/**
+ * Runs a git command in the given directory and returns the 
+ * trimmed output, stripping trailing newlines (\n or \r\n).
+ * 
+ * Returns null if the command fails (e.g. not a git repo, no commits).
+ */
+
 const gitCommand = (path: string, command: string): string | null => {
 	const execSyncOption: ExecSyncOptionsWithStringEncoding = {
 		cwd: path,
@@ -27,6 +34,10 @@ const gitCommand = (path: string, command: string): string | null => {
 	}
 };
 
+/**
+ * Returns git information for the given directory,
+ * or null if it is not a git repository.
+ */
 export default function getGitInfo(path: string): GitInfo | null {
 	if (!isGitRepo(path)) return null;
 
@@ -42,6 +53,7 @@ export default function getGitInfo(path: string): GitInfo | null {
 	};
 }
 
+/** Returns true if the given path is inside a git work tree. */
 export function isGitRepo(path: string): boolean {
 	const isInsideWorkTree = gitCommand(
 		path,
@@ -50,6 +62,10 @@ export function isGitRepo(path: string): boolean {
 	return isInsideWorkTree === "true";
 }
 
+/** 
+ * Returns the current branch name, or null if in 
+ * detached HEAD state or not a git repo. 
+ */
 export function getBranch(path: string): string | null {
 	const raw =
 		gitCommand(path, "git branch --show-current") ??
@@ -62,6 +78,12 @@ export function getBranch(path: string): string | null {
 	return raw;
 }
 
+/**
+ * Returns the message and date of the last commit.
+ * Uses a null byte (\x00) as separator in the git format string
+ * to safely split message and date without conflicts with 
+ * special characters.
+ */
 export function getLastCommit(path: string): {
 	message: string | null;
 	date: Date | null;
@@ -80,6 +102,10 @@ export function getLastCommit(path: string): {
 		date: safeDate,
 	};
 }
+
+/** Returns true if the repo has uncommitted changes, 
+ * false if clean, null if not a git repo. 
+ */
 
 export function isRepoDirty(path: string): boolean | null {
 	const status = gitCommand(path, "git status --porcelain");

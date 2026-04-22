@@ -1,11 +1,15 @@
 #!/usr/bin/env node
 
+import { fs } from "memfs";
+
 import { program, Option } from "commander";
 import Scanner from "./scanner.js";
 import formatter from "./formatter.js";
-import { addGitInfoToProject, parseSortOption, sortProjects } from "./projects.js";
-
-
+import {
+	addGitInfoToProject,
+	parseSortOption,
+	sortProjects,
+} from "./projects.js";
 
 program
 	.name("ondesided")
@@ -15,7 +19,7 @@ program
 	.addOption(
 		new Option("-f, --format <type>", "Format output: pretty, tsv, json")
 			.choices(["pretty", "tsv", "json"])
-			.default("pretty"),
+			.default("tsv"),
 	)
 	.addOption(
 		new Option(
@@ -26,30 +30,53 @@ program
 			.default("path-only"),
 	)
 	.addOption(
-		new Option("--sort <type>", "Sort")
+		new Option("--sort <mode>", "Sort results by date or name")
 			.choices(["date", "date-asc", "name", "name-desc"])
 			.default("date"),
 	)
 	.action((options) => {
-		const scanner = new Scanner();
-		const projectDirectories = scanner.scanFolder(options.dir);
-		const projectsWithGitInfo = projectDirectories.map(addGitInfoToProject);
+		try {
+			const scanner = new Scanner();
+			const projectDirectories = scanner.scanFolder(options.dir);
+			const projectsWithGitInfo =
+				projectDirectories.map(addGitInfoToProject);
 
-		const parsedSortOption = parseSortOption(options.sort);
-		const sortedProjects = sortProjects(
-			projectsWithGitInfo,
-			parsedSortOption.by,
-			parsedSortOption.order,
-		);
+			const parsedSortOption = parseSortOption(options.sort);
+			const sortedProjects = sortProjects(
+				projectsWithGitInfo,
+				parsedSortOption.by,
+				parsedSortOption.order,
+			);
 
-		const output = formatter(
-			sortedProjects,
-			options.format,
-			options.detail,
-		);
+			const output = formatter(
+				sortedProjects,
+				options.format,
+				options.detail,
+			);
 
-		if (output) {
-			console.log(output);
+			if (output) {
+				console.log(output);
+			}
+		} catch (err) {
+			if (
+				err instanceof Error &&
+				"code" in err &&
+				err.code === "ENOENT"
+			) {
+				console.error(`Error: directory not found: ${options.dir}`);
+			} else if (
+				err instanceof Error &&
+				"code" in err &&
+				err.code === "EACCES"
+			) {
+				console.error(`Error: permission denied: ${options.dir}`);
+			} else {
+				console.error(err);
+				console.error(
+					`An unexpected error occurred. Please report it at https://github.com/carlotrimarchi/ondesided/issues`,
+				);
+			}
+			process.exit(1);
 		}
 	});
 

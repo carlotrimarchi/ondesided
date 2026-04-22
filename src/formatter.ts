@@ -235,7 +235,7 @@ export function formatAsPretty(projects: Project[], props: string[]): string {
 
 export default function formatter(
 	projects: Project[],
-	format: OutputFormat = "pretty",
+	format: OutputFormat = "tsv",
 	detail: OutputDetail = "path-only",
 ): string {
 	const props = propsByDetail[detail];

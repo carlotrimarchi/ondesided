@@ -79,9 +79,9 @@ describe("setProp", () => {
 	});
 
 	it("does not affect unrelated properties", () => {
-		const obj: any = { foo: 1 };
-		setProp(obj, ["bar"], 2);
-		expect(obj).toEqual({ foo: 1, bar: 2 });
+		const obj: any = { foo: "foo" };
+		setProp(obj, ["bar"], "bar");
+		expect(obj).toEqual({ foo: "foo", bar: "bar" });
 	});
 
 	it("creates intermediate objects if missing", () => {

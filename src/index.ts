@@ -3,52 +3,9 @@
 import { program, Option } from "commander";
 import Scanner from "./scanner.js";
 import formatter from "./formatter.js";
-import getGitInfo from "./git.js";
-import type { Project } from "./scanner.js";
+import { addGitInfoToProject, parseSortOption, sortProjects } from "./projects.js";
 
-/** Fetches and attaches git information to a project. */
 
-function enrichProject(project: Project): Project {
-	const git = getGitInfo(project.path);
-	project.isGitRepo = git !== null;
-	project.git = git;
-	return project;
-}
-
-/**
- * Sorts projects by last commit date, most recent first.
- * Projects without commits come last, sorted alphabetically.
- */
-
-function sortProjects(projects: Project[]): Project[] {
-	// Sort priority:
-	// 1) projects with a commit date come first.
-	// 2) newer commit dates come before older ones.
-	// 3) if both have no commits, sort by project name.
-	projects.sort((projA, projB) => {
-		// this is mostly to shut TypeScript up
-		// .git or date can't be missing at this point, but in case let's
-		// set it to null
-		const timeA = projA.git?.lastCommitDate?.getTime() ?? null;
-		const timeB = projB.git?.lastCommitDate?.getTime() ?? null;
-
-		// both have a date: descending order (most recent first).
-		if (timeA !== null && timeB !== null) {
-			return timeB - timeA;
-			// only A has a date: A comes first
-		} else if (timeA !== null) {
-			return -1;
-			// only B has a date: B comes first
-		} else if (timeB !== null) {
-			return 1;
-		} else {
-			// neither has a date: alphabetical fallback
-			return projA.name.localeCompare(projB.name);
-		}
-	});
-
-  return projects;
-}
 
 program
 	.name("ondesided")
@@ -61,15 +18,29 @@ program
 			.default("pretty"),
 	)
 	.addOption(
-		new Option("--detail <level>", "Determines which properties will be included in the output.")
+		new Option(
+			"--detail <level>",
+			"Determines which properties will be included in the output.",
+		)
 			.choices(["path-only", "minimal", "simple", "full"])
 			.default("path-only"),
+	)
+	.addOption(
+		new Option("--sort <type>", "Sort")
+			.choices(["date", "date-asc", "name", "name-desc"])
+			.default("date"),
 	)
 	.action((options) => {
 		const scanner = new Scanner();
 		const projectDirectories = scanner.scanFolder(options.dir);
-		const enrichedProjects = projectDirectories.map(enrichProject);
-		const sortedProjects = sortProjects(enrichedProjects);
+		const projectsWithGitInfo = projectDirectories.map(addGitInfoToProject);
+
+		const parsedSortOption = parseSortOption(options.sort);
+		const sortedProjects = sortProjects(
+			projectsWithGitInfo,
+			parsedSortOption.by,
+			parsedSortOption.order,
+		);
 
 		const output = formatter(
 			sortedProjects,

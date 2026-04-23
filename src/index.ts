@@ -34,6 +34,17 @@ program
 			.choices(["date", "date-asc", "name", "name-desc"])
 			.default("date"),
 	)
+	.addOption(
+		new Option("--limit <number>", "Limit the number of results").argParser(
+			(value) => {
+				const parsed = parseInt(value);
+				if (isNaN(parsed) || parsed < 1) {
+					throw new Error("--limit must be a positive integer");
+				}
+				return parsed;
+			},
+		),
+	)
 	.action((options) => {
 		try {
 			const scanner = new Scanner();
@@ -48,8 +59,12 @@ program
 				parsedSortOption.order,
 			);
 
+			const limitedProjects = options.limit
+				? sortedProjects.slice(0, parseInt(options.limit))
+				: sortedProjects;
+
 			const output = formatter(
-				sortedProjects,
+				limitedProjects,
 				options.format,
 				options.detail,
 			);
@@ -80,4 +95,11 @@ program
 		}
 	});
 
-program.parse();
+try {
+	program.parse();
+} catch (err) {
+	if (err instanceof Error) {
+		console.error(`Error: ${err.message}`);
+	}
+	process.exit(1);
+}

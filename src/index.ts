@@ -1,7 +1,5 @@
 #!/usr/bin/env node
 
-import { fs } from "memfs";
-
 import { program, Option } from "commander";
 import Scanner from "./scanner.js";
 import formatter from "./formatter.js";

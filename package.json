@@ -1,11 +1,14 @@
 {
   "name": "ondesided",
-  "version": "0.1.0",
-  "description": "Track your side projects",
+  "version": "0.1.1",
+  "description": "A CLI to keep track of all your side projects",
   "type": "module",
   "bin": {
     "ondesided": "./dist/index.js"
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "cli": "tsx src/index.ts",
     "build": "tsc",
@@ -18,10 +21,14 @@
     "url": "git+https://github.com/carlotrimarchi/ondesided.git"
   },
   "keywords": [
+    "productivity",
+    "git",
     "cli",
     "side-projects",
     "project-management",
-    "developer-tools"
+    "developer-tools",
+    "nodejs",
+    "typescript"
   ],
   "author": {
     "name": "Carlo Trimarchi",
